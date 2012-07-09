@@ -1,0 +1,5 @@
+FreshBing
+Copyright 2012 Nikhil Dabas
+
+This product includes software developed by
+Nikhil Dabas (http://www.nikhildabas.com/).
