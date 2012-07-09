@@ -42,7 +42,7 @@ Add/Remove Programs or Programs and Features applet.
 
 ## License
 
-Licensed under the Apache Licence, version 2.0.
+Licensed under the Apache License, version 2.0.
 
 ## Credits
 
