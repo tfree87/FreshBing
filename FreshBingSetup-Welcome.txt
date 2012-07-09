@@ -1,0 +1,8 @@
+FreshBing is a simple, unobtrusive script to update your wallpaper daily, from the Bing Desktop images RSS feed.
+
+The script will run daily to update the wallpaper, or in the case of Windows XP, on startup (every time you log on.) You can also manually force an update to the next available wallpaper, by clicking the FreshBing icon in your Start Menu.
+
+Note that there is no user interface. The script runs silently - you might see a PowerShell window flash briefly, and your wallpaper will update a few seconds later, if the download was successful.
+
+Project: https://github.com/ndabas/FreshBing
+Author: http://www.nikhildabas.com/

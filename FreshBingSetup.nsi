@@ -36,6 +36,8 @@
   
   !define MUI_ABORTWARNING
   
+  !define /file MUI_WELCOMEPAGE_TEXT "FreshBingSetup-Welcome.txt"
+  
   !define MUI_FINISHPAGE_RUN "${PRODUCT_EXEC}"
   !define MUI_FINISHPAGE_RUN_PARAMETERS "${PRODUCT_ARGS}"
 
@@ -60,6 +62,11 @@
 
 Section ""
 
+  ReadRegDWORD $R0 HKLM "SOFTWARE\Microsoft\PowerShell\1" "Install"
+  ${If} $R0 != 1
+    Abort "Please install Windows PowerShell first."
+  ${EndIf}
+  
   SetOutPath "$INSTDIR"
   
   File "${PRODUCT_FILE}"
