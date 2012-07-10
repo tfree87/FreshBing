@@ -22,6 +22,13 @@ The script can also be executed from a command line, like this:
 
     powershell -ExecutionPolicy unrestricted -File FreshBing.ps1
 
+## Try it live!
+
+You can try out the script, without installing it first. Run this command, from
+_Start_ | _Run..._ or from a command prompt:
+
+    powershell -ExecutionPolicy unrestricted -Command "iex ((New-Object Net.WebClient).DownloadString('https://raw.github.com/ndabas/FreshBing/master/FreshBing.ps1'))"
+
 ## How it works
 
 The script is a simple PowerShell script that downloads the Bing Desktop RSS
