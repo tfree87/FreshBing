@@ -42,7 +42,7 @@ $result = [FreshBing.UnsafeNativeMethods]::SystemParametersInfo($SPI_SETDESKWALL
 # This could fail on Windows XP because it does not support jpg wallpapers natively
 if ($result -ne 1) {
     # Convert the file to a bmp and set that as wallpaper
-    [Reflection.Assembly]::LoadWithPartialName('System.Drawing')
+    [Reflection.Assembly]::LoadWithPartialName("System.Drawing") | Out-Null
     
     $image = [Drawing.Image]::FromFile($selectedFile)
     $bmpFile = [System.IO.Path]::ChangeExtension($selectedFile, ".bmp")
