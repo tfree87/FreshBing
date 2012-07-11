@@ -31,6 +31,11 @@ if (!$selectedUrl) {
 "Downloading $selectedUrl -> $selectedFile"
 (New-Object System.Net.WebClient).DownloadFile($selectedUrl, $selectedFile)
 
+if (!(Test-Path $selectedFile)) {
+    "Download failed - try again later."
+    Return
+}
+
 Add-Type -Namespace FreshBing -Name UnsafeNativeMethods -MemberDefinition @"
 [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
 public static extern int SystemParametersInfo (int uAction, int uParam, string lpvParam, int fuWinIni);
@@ -54,7 +59,7 @@ if ($result -ne 1) {
 Set-ItemProperty -path "HKCU:\Control Panel\Desktop\" -name WallpaperStyle -value 2
 Set-ItemProperty -path "HKCU:\Control Panel\Desktop\" -name TileWallpaper -value 0
 
-if ($oldfile -and (Test-Path $oldFile) -and (Test-Path $selectedFile)) {
+if ($oldfile -and (Test-Path $oldFile)) {
     Remove-Item $oldFile
     "Deleting $oldFile"
     
