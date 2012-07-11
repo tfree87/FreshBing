@@ -7,10 +7,10 @@ only works with Windows 7.
 
 ## Usage
 
-Install the script using [the setup
-program](https://github.com/downloads/ndabas/FreshBing/FreshBingSetup.exe). You
-do not need administrative privileges to install it. FreshBing requires that you
-have Windows PowerShell installed on your computer.
+[Download the installer](https://github.com/downloads/ndabas/FreshBing/FreshBingSetup.exe)
+
+You do not need administrative privileges to install it. FreshBing requires that
+you have Windows PowerShell installed on your computer.
 
 The script will run daily to update the wallpaper, or in the case of Windows XP,
 on startup (every time you log on.)
