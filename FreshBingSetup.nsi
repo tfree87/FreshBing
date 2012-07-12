@@ -75,6 +75,9 @@ Section ""
   CreateShortCut "$SMPROGRAMS\${PRODUCT_SHORTCUT}" "${PRODUCT_EXEC}" "${PRODUCT_ARGS}" "$INSTDIR\${PRODUCT_ICON}" "" SW_SHOWMINIMIZED
   
   ; Scheduled task
+  ; Delete it first and then re-add it, because XP does not like the /f switch with /create
+  nsExec::ExecToLog 'schtasks /delete /tn "${PRODUCT_NAME}" /f'
+  Pop $R0
   nsExec::ExecToLog 'schtasks /create /tn "${PRODUCT_NAME}" /tr "${PRODUCT_EXEC} ${PRODUCT_ARGS_ESC}" /sc DAILY'
   Pop $R0
   ; This fails on XP because it asks for the current user's password - so just set it up to run on every log on.
