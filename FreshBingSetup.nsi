@@ -80,10 +80,9 @@ Section ""
   Pop $R0
   nsExec::ExecToLog 'schtasks /create /tn "${PRODUCT_NAME}" /tr "${PRODUCT_EXEC} ${PRODUCT_ARGS_ESC}" /sc DAILY'
   Pop $R0
-  ; This fails on XP because it asks for the current user's password - so just set it up to run on every log on.
-  ${If} $R0 != 0
-    CopyFiles /SILENT "$SMPROGRAMS\${PRODUCT_SHORTCUT}" "$SMSTARTUP"
-  ${EndIf}
+  
+  ; Run on startup
+  CreateShortCut "$SMSTARTUP\${PRODUCT_SHORTCUT}" "${PRODUCT_EXEC}" "${PRODUCT_ARGS} -startup" "$INSTDIR\${PRODUCT_ICON}" "" SW_SHOWMINIMIZED
   
   ; Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"

@@ -1,6 +1,19 @@
 # FreshBing
 # https://github.com/ndabas/FreshBing
 
+Param([switch]$startup)
+
+$runFile = Join-Path (Split-Path $MyInvocation.MyCommand.Path) "LastRun.xml"
+
+# On startup, only run if it's been more than a day since the last run.
+if ($startup -and (Test-Path $runFile)) {
+    $lastRun = Import-Clixml $runFile
+    if (((Get-Date) - $lastRun).TotalDays -lt 1) {
+        "Less than a day since the last run - exiting."
+        Return
+    }
+}
+
 $rssUrl = "http://themeserver.microsoft.com/default.aspx?p=Bing&c=Desktop&m=en-US"
 $feed = [xml](New-Object System.Net.WebClient).DownloadString($rssUrl)
 $base = [Environment]::GetFolderPath("MyPictures")
@@ -69,3 +82,6 @@ if ($oldfile -and (Test-Path $oldFile)) {
         "Deleting $bmpFile"
     }
 }
+
+# Save this run time
+Get-Date | Export-Clixml $runFile
