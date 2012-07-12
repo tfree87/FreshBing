@@ -105,6 +105,7 @@ Section "Uninstall"
 
   Delete "$INSTDIR\${PRODUCT_FILE}"
   Delete "$INSTDIR\${PRODUCT_ICON}"
+  Delete "$INSTDIR\LastRun.xml"
   
   Delete "$SMPROGRAMS\${PRODUCT_SHORTCUT}"
   Delete "$SMSTARTUP\${PRODUCT_SHORTCUT}"
