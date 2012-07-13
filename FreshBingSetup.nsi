@@ -78,11 +78,11 @@ Section ""
   ; Delete it first and then re-add it, because XP does not like the /f switch with /create
   nsExec::ExecToLog 'schtasks /delete /tn "${PRODUCT_NAME}" /f'
   Pop $R0
-  nsExec::ExecToLog 'schtasks /create /tn "${PRODUCT_NAME}" /tr "${PRODUCT_EXEC} ${PRODUCT_ARGS_ESC}" /sc DAILY'
+  nsExec::ExecToLog 'schtasks /create /tn "${PRODUCT_NAME}" /tr "${PRODUCT_EXEC} ${PRODUCT_ARGS_ESC} -autorun" /sc DAILY'
   Pop $R0
   
   ; Run on startup
-  CreateShortCut "$SMSTARTUP\${PRODUCT_SHORTCUT}" "${PRODUCT_EXEC}" "${PRODUCT_ARGS} -startup" "$INSTDIR\${PRODUCT_ICON}" "" SW_SHOWMINIMIZED
+  CreateShortCut "$SMSTARTUP\${PRODUCT_SHORTCUT}" "${PRODUCT_EXEC}" "${PRODUCT_ARGS} -autorun" "$INSTDIR\${PRODUCT_ICON}" "" SW_SHOWMINIMIZED
   
   ; Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"

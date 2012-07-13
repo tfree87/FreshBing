@@ -1,12 +1,12 @@
 # FreshBing
 # https://github.com/ndabas/FreshBing
 
-Param([switch]$startup)
+Param([switch]$autorun)
 
 $runFile = Join-Path (Split-Path $MyInvocation.MyCommand.Path) "LastRun.xml"
 
-# On startup, only run if it's been more than a day since the last run.
-if ($startup -and (Test-Path $runFile)) {
+# On autorun, only run if it's been more than a day since the last run.
+if ($autorun -and (Test-Path $runFile)) {
     $lastRun = Import-Clixml $runFile
     if (((Get-Date) - $lastRun).TotalDays -lt 1) {
         "Less than a day since the last run - exiting."
