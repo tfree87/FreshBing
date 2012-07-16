@@ -6,9 +6,11 @@ Param([switch]$autorun)
 $runFile = Join-Path (Split-Path $MyInvocation.MyCommand.Path) "LastRun.xml"
 
 # On autorun, only run if it's been more than a day since the last run.
+# We actually check for a 23-hour gap because scheduled tasks are not exactly
+# precise.
 if ($autorun -and (Test-Path $runFile)) {
     $lastRun = Import-Clixml $runFile
-    if (((Get-Date) - $lastRun).TotalDays -lt 1) {
+    if (((Get-Date) - $lastRun).TotalHours -lt 23) {
         "Less than a day since the last run - exiting."
         Return
     }
