@@ -1,9 +1,9 @@
 # FreshBing
 
-FreshBing is a simple, unobtrusive script to update your wallpaper daily, from
-the Bing Desktop images RSS feed. It includes a lightweight installer, and works
-well with Windows XP and above, unlike the official Bing Desktop software, which
-only works with Windows 7.
+FreshBing is a simple, unobtrusive script to update your wallpaper daily,
+downloaded fresh from the Bing Desktop images RSS feed. It includes a
+lightweight installer, and works well with Windows XP and above, unlike the
+official Bing Desktop software, which only works with Windows 7.
 
 ## Usage
 
