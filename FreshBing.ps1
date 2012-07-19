@@ -23,6 +23,11 @@ $selectedUrl = ""
 $selectedFile = ""
 $oldFile = ""
 
+if (!$feed) {
+    "Feed download failed - try again later."
+    Return
+}
+
 # Run through the feed, and find the oldest file that we haven't downloaded yet.
 foreach ($item in $feed.rss.channel.item) {
     $url = New-Object System.Uri($item.enclosure.url)
