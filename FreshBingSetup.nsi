@@ -36,7 +36,7 @@
   
   !define MUI_ABORTWARNING
   
-  !define /file MUI_WELCOMEPAGE_TEXT "FreshBingSetup-Welcome.txt"
+  !define MUI_WELCOMEPAGE_TEXT "FreshBing is a simple, unobtrusive script to update your wallpaper daily, from the Bing Desktop images RSS feed. More info and details:$\r$\n$\r$\nhttp://git.io/freshbing"
   
   !define MUI_FINISHPAGE_RUN "${PRODUCT_EXEC}"
   !define MUI_FINISHPAGE_RUN_PARAMETERS "${PRODUCT_ARGS}"
