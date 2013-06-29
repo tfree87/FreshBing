@@ -15,6 +15,18 @@
 
 Param([switch]$autorun)
 
+$settingsFile = Join-Path (Split-Path $MyInvocation.MyCommand.Path) "Settings.xml"
+
+# Default values, if a settings file does not exist
+$refreshIntervalDays = 1
+$rssUrl = "http://themeserver.microsoft.com/default.aspx?p=Bing&c=Desktop&m=en-US" 
+
+if (Test-Path $settingsFile) {
+    $settings = [xml](Get-Content $settingsFile)
+    $refreshIntervalDays = $settings.settings.refreshIntervalDays
+    $rssUrl = $settings.settings.rssUrl
+}
+
 $runFile = Join-Path (Split-Path $MyInvocation.MyCommand.Path) "LastRun.xml"
 
 # On autorun, only run if it's been more than a day since the last run.
@@ -22,13 +34,13 @@ $runFile = Join-Path (Split-Path $MyInvocation.MyCommand.Path) "LastRun.xml"
 # precise.
 if ($autorun -and (Test-Path $runFile)) {
     $lastRun = Import-Clixml $runFile
-    if (((Get-Date) - $lastRun).TotalHours -lt 23) {
-        "Less than a day since the last run - exiting."
+    $totalHours = 24 * ($refreshIntervalDays - 1) + 23
+    if (((Get-Date) - $lastRun).TotalHours -lt $totalHours) {
+        Write-Warning "Less than $refreshIntervalDays day(s) since the last run - exiting."
         Return
     }
 }
 
-$rssUrl = "http://themeserver.microsoft.com/default.aspx?p=Bing&c=Desktop&m=en-US"
 $feed = [xml](New-Object System.Net.WebClient).DownloadString($rssUrl)
 $base = [Environment]::GetFolderPath("MyPictures")
 $selectedUrl = ""
@@ -36,7 +48,7 @@ $selectedFile = ""
 $oldFile = ""
 
 if (!$feed) {
-    "Feed download failed - try again later."
+    Write-Error "Feed download failed - try again later."
     Return
 }
 
@@ -56,15 +68,15 @@ foreach ($item in $feed.rss.channel.item) {
 }
 
 if (!$selectedUrl) {
-    "Nothing to download - we already have the newest file."
+    Write-Host "Nothing to download - we already have the newest file."
     Return
 }
 
-"Downloading $selectedUrl -> $selectedFile"
+Write-Host "Downloading $selectedUrl -> $selectedFile"
 (New-Object System.Net.WebClient).DownloadFile($selectedUrl, $selectedFile)
 
 if (!(Test-Path $selectedFile)) {
-    "Download failed - try again later."
+    Write-Error "Download failed - try again later."
     Return
 }
 
@@ -93,12 +105,12 @@ Set-ItemProperty -path "HKCU:\Control Panel\Desktop\" -name TileWallpaper -value
 
 if ($oldfile -and (Test-Path $oldFile)) {
     Remove-Item $oldFile
-    "Deleting $oldFile"
+    Write-Host "Deleting $oldFile"
     
     $bmpFile = [System.IO.Path]::ChangeExtension($oldFile, ".bmp")
     if (Test-Path $bmpFile) {
         Remove-Item $bmpFile
-        "Deleting $bmpFile"
+        Write-Host "Deleting $bmpFile"
     }
 }
 

@@ -5,6 +5,8 @@ downloaded fresh from the Bing Desktop images RSS feed. It includes a
 lightweight installer, and works well with Windows XP and above, unlike the
 official Bing Desktop software, which only works with Windows 7.
 
+The RSS feed URL and the update interval can be customized, see below.
+
 ## Usage
 
 [Download the installer](https://github.com/downloads/ndabas/FreshBing/FreshBingSetup.exe)
@@ -41,6 +43,16 @@ JPEG files to BMP format before setting those as wallpaper.
 
 Finally, it will automatically delete any previously downloaded file when it
 downloads a new one, so it keeps only one file at a time.
+
+## Settings and Customization
+
+You can change the update interval (in days) and the RSS feed URL by creating a
+Settings.xml file in the install directory: (which is %LOCALAPPDATA%\FreshBing)
+
+    <settings>
+        <refreshIntervalDays>2</refreshIntervalDays>
+        <rssUrl>http://themeserver.microsoft.com/default.aspx?p=Windows&amp;c=LandScapes&amp;m=en-US</rssUrl>
+    </settings>
 
 ## Uninstall
 
