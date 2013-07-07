@@ -9,7 +9,7 @@ The RSS feed URL and the update interval can be customized, see below.
 
 ## Usage
 
-[Download the installer](https://github.com/downloads/ndabas/FreshBing/FreshBingSetup.exe)
+[Download the installer](https://github.com/ndabas/FreshBing/releases)
 
 You do not need administrative privileges to install it. FreshBing requires that
 you have Windows PowerShell installed on your computer.
