@@ -19,32 +19,23 @@ $settingsFile = Join-Path (Split-Path $MyInvocation.MyCommand.Path) "Settings.xm
 
 # Default values, if a settings file does not exist
 $refreshIntervalDays = 1
-$rssUrl = "http://themeserver.microsoft.com/default.aspx?p=Bing&c=Desktop&m=en-US" 
+$rssUrl = "http://www.bing.com/HPImageArchive.aspx?format=xml&idx=0&n=1&mkt=en-AU" 
 
 if (Test-Path $settingsFile) {
     $settings = [xml](Get-Content $settingsFile)
-    $refreshIntervalDays = $settings.settings.refreshIntervalDays
-    $rssUrl = $settings.settings.rssUrl
+	$refreshIntervalDays = $settings.settings.refreshIntervalDays
+	$rssUrl = $settings.settings.rssUrl
 }
 
 $runFile = Join-Path (Split-Path $MyInvocation.MyCommand.Path) "LastRun.xml"
 
-# On autorun, only run if it's been more than a day since the last run.
-# We actually check for a 23-hour gap because scheduled tasks are not exactly
-# precise.
-if ($autorun -and (Test-Path $runFile)) {
-    $lastRun = Import-Clixml $runFile
-    $totalHours = 24 * ($refreshIntervalDays - 1) + 23
-    if (((Get-Date) - $lastRun).TotalHours -lt $totalHours) {
-        Write-Warning "Less than $refreshIntervalDays day(s) since the last run - exiting."
-        Return
-    }
-}
-
-$feed = [xml](New-Object System.Net.WebClient).DownloadString($rssUrl)
+[System.Net.WebClient] $wc = New-Object System.Net.WebClient
+$wc.Encoding = [System.Text.Encoding]::UTF8
+ 
+$feed = [xml]$wc.DownloadString($rssUrl)
 $base = [Environment]::GetFolderPath("MyPictures")
 $selectedUrl = ""
-$selectedFile = ""
+$selectedFile = $base + "\background.jpg"
 $oldFile = ""
 
 if (!$feed) {
@@ -52,25 +43,12 @@ if (!$feed) {
     Return
 }
 
-# Run through the feed, and find the oldest file that we haven't downloaded yet.
-foreach ($item in $feed.rss.channel.item) {
-    $url = New-Object System.Uri($item.enclosure.url)
-    $file = [System.Uri]::UnescapeDataString($url.Segments[-1])
-    $path = Join-Path $base $file
-    
-    # We have this file, so we need to download the previous file and delete this one
-    if (Test-Path $path) {
-        $oldFile = $path
-        Break
-    }
-    $selectedUrl = $url
-    $selectedFile = $path
-}
 
-if (!$selectedUrl) {
-    Write-Host "Nothing to download - we already have the newest file."
-    Return
-}
+$selectedUrl = "http://www.bing.com" + $feed.images.image.url
+
+$selectedUrl = $selectedUrl.Substring(0, $selectedUrl.LastIndexOf("_"))
+
+$selectedUrl += "_1920x1080.jpg"
 
 Write-Host "Downloading $selectedUrl -> $selectedFile"
 (New-Object System.Net.WebClient).DownloadFile($selectedUrl, $selectedFile)
@@ -87,32 +65,28 @@ public static extern int SystemParametersInfo (int uAction, int uParam, string l
 $SPI_SETDESKWALLPAPER = 20
 $SPIF_UPDATEINIFILE = 0x01
 $SPIF_SENDWININICHANGE = 0x02
-$result = [FreshBing.UnsafeNativeMethods]::SystemParametersInfo($SPI_SETDESKWALLPAPER, 0, $selectedFile, $SPIF_UPDATEINIFILE -bor $SPIF_SENDWININICHANGE)
-# This could fail on Windows XP because it does not support jpg wallpapers natively
-if ($result -ne 1) {
-    # Convert the file to a bmp and set that as wallpaper
-    [Reflection.Assembly]::LoadWithPartialName("System.Drawing") | Out-Null
+
+[Reflection.Assembly]::LoadWithPartialName("System.Drawing") | Out-Null
     
-    $image = [Drawing.Image]::FromFile($selectedFile)
-    $bmpFile = [System.IO.Path]::ChangeExtension($selectedFile, ".bmp")
-    $image.Save($bmpFile, "Bmp")
-    $image.Dispose()
+[Drawing.Image] $image = [Drawing.Image]::FromFile($selectedFile)
+[Drawing.Graphics] $g = [System.Drawing.Graphics]::FromImage($image)
+$g.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
+
+$font = [Drawing.Font]::new("Arial", 8)
+$brush = [System.Drawing.Brushes]::White
+$point =  [Drawing.PointF]::new(0, $image.Height - 16)
+
+$g.DrawString($feed.images.image.copyright, $font, $brush, $point)
+
+$bmpFile = [System.IO.Path]::ChangeExtension($selectedFile, ".bmp")
+$image.Save($bmpFile) #, "Bmp")
+$g.Dispose()
+$image.Dispose()
     
-    [FreshBing.UnsafeNativeMethods]::SystemParametersInfo($SPI_SETDESKWALLPAPER, 0, $bmpFile, $SPIF_UPDATEINIFILE -bor $SPIF_SENDWININICHANGE)
-}
+[FreshBing.UnsafeNativeMethods]::SystemParametersInfo($SPI_SETDESKWALLPAPER, 0, $bmpFile, $SPIF_UPDATEINIFILE -bor $SPIF_SENDWININICHANGE)
+
 Set-ItemProperty -path "HKCU:\Control Panel\Desktop\" -name WallpaperStyle -value 2
 Set-ItemProperty -path "HKCU:\Control Panel\Desktop\" -name TileWallpaper -value 0
-
-if ($oldfile -and (Test-Path $oldFile)) {
-    Remove-Item $oldFile
-    Write-Host "Deleting $oldFile"
-    
-    $bmpFile = [System.IO.Path]::ChangeExtension($oldFile, ".bmp")
-    if (Test-Path $bmpFile) {
-        Remove-Item $bmpFile
-        Write-Host "Deleting $bmpFile"
-    }
-}
 
 # Save this run time
 Get-Date | Export-Clixml $runFile
