@@ -72,11 +72,17 @@ $SPIF_SENDWININICHANGE = 0x02
 [Drawing.Graphics] $g = [System.Drawing.Graphics]::FromImage($image)
 $g.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
 
-$font = [Drawing.Font]::new("Arial", 8)
-$brush = [System.Drawing.Brushes]::White
-$point =  [Drawing.PointF]::new(0, $image.Height - 16)
+$font = [Drawing.Font]::new("Arial", 9)
 
-$g.DrawString($feed.images.image.copyright, $font, $brush, $point)
+# http://stackoverflow.com/a/1192560/25702
+$g.DrawString($feed.images.image.copyright, $font, [System.Drawing.Brushes]::Black, [Drawing.PointF]::new(0, $image.Height - 16))
+$g.DrawString($feed.images.image.copyright, $font, [System.Drawing.Brushes]::Black, [Drawing.PointF]::new(2, $image.Height - 16))
+$g.DrawString($feed.images.image.copyright, $font, [System.Drawing.Brushes]::Black, [Drawing.PointF]::new(1, $image.Height - 16 - 1))
+$g.DrawString($feed.images.image.copyright, $font, [System.Drawing.Brushes]::Black, [Drawing.PointF]::new(1, $image.Height - 16 + 1))
+
+$g.DrawString($feed.images.image.copyright, $font, [System.Drawing.Brushes]::White, [Drawing.PointF]::new(1, $image.Height - 16))
+
+$font.Dispose()
 
 $bmpFile = [System.IO.Path]::ChangeExtension($selectedFile, ".bmp")
 $image.Save($bmpFile) #, "Bmp")
