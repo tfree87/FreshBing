@@ -19,7 +19,7 @@ $settingsFile = Join-Path (Split-Path $MyInvocation.MyCommand.Path) "Settings.xm
 
 # Default values, if a settings file does not exist
 $refreshIntervalDays = 1
-$rssUrl = "http://www.bing.com/HPImageArchive.aspx?format=xml&idx=0&n=1&mkt=en-AU" 
+$rssUrl = "http://www.bing.com/HPImageArchive.aspx?format=xml&idx=0&n=1&mkt=en-US" 
 
 if (Test-Path $settingsFile) {
     $settings = [xml](Get-Content $settingsFile)
